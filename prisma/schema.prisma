@@ -1,0 +1,156 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      String   @default("ADMIN")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Event {
+  id                String              @id @default(cuid())
+  title             String
+  description       String
+  content           String?
+  category          String              @default("Webinar")
+  date              String
+  time              String
+  location          String              @default("Virtual (Online)")
+  webinarLink       String?
+  image             String?
+  imageBytes        Bytes?
+  imageMimeType     String?             @default("image/jpeg")
+  isFree            Boolean             @default(true)
+  amount            Float               @default(0)
+  isPast            Boolean             @default(false)
+  whatsappGroupLink String?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  registrations     EventRegistration[]
+  scheduledEmails   ScheduledEmail[]
+}
+
+model EventRegistration {
+  id                String   @id @default(cuid())
+  eventId           String
+  event             Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  name              String
+  email             String
+  phone             String
+  paymentStatus     String   @default("FREE") // "FREE", "PENDING", "SUCCESS", "FAILED"
+  amountPaid        Float    @default(0)
+  paystackReference String?  @unique
+  createdAt         DateTime @default(now())
+}
+
+model Staff {
+  id            String   @id @default(cuid())
+  name          String
+  role          String
+  department    String
+  email         String?
+  phone         String?
+  bio           String?
+  image         String?
+  imageBytes    Bytes?
+  imageMimeType String?  @default("image/jpeg")
+  order         Int      @default(0)
+  isActive      Boolean  @default(true)
+  isAdmin       Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model ScheduledEmail {
+  id             String    @id @default(cuid())
+  eventId        String
+  event          Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  type           String    // "LINK", "1_HOUR", "30_MIN", "15_MIN", "LIVE", "CUSTOM"
+  subject        String
+  status         String    @default("PENDING") // "PENDING", "SENT", "FAILED"
+  scheduledFor   DateTime?
+  sentAt         DateTime?
+  recipientCount Int       @default(0)
+  createdAt      DateTime  @default(now())
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  email     String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model AtsRegistration {
+  id           String   @id @default(cuid())
+  name         String
+  address      String
+  phone        String
+  email        String
+  subjectTaken String
+  atsLevels    String[]
+  notes        String?
+  createdAt    DateTime @default(now())
+}
+
+model WhatsAppGroup {
+  id          String   @id @default(cuid())
+  name        String
+  atsLevel    String
+  inviteUrl   String
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Review {
+  id          String   @id @default(cuid())
+  name        String
+  email       String?
+  role        String?
+  company     String?
+  serviceUsed String
+  rating      Int      @default(5)
+  title       String
+  comment     String
+  recommend   Boolean  @default(true)
+  isApproved  Boolean  @default(true)
+  createdAt   DateTime @default(now())
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String
+  service   String
+  message   String
+  status    String   @default("PENDING")
+  createdAt DateTime @default(now())
+}
+
+model RfpSubmission {
+  id                 String   @id @default(cuid())
+  company            String
+  contactName        String
+  email              String
+  phone              String
+  service            String
+  projectTitle       String
+  projectDescription String
+  budget             String?
+  timeline           String?
+  createdAt          DateTime @default(now())
+}

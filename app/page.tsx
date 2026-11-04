@@ -1,19 +1,21 @@
-import { Button } from "@/components/ui/button"
+import { Navbar } from "@/components/navbar";
+import { Footer } from "@/components/footer";
+import { HeroSection } from "@/components/home/hero-section";
+import { ServicesSection } from "@/components/home/services-section";
+import { TrendingInsights } from "@/components/home/trending-insights";
+import { ContactSection } from "@/components/home/contact-section";
 
-export default function Page() {
+export default function HomePage() {
   return (
-    <div className="flex min-h-svh p-6">
-      <div className="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">
-        <div>
-          <h1 className="font-medium">Project ready!</h1>
-          <p>You may now add components and start building.</p>
-          <p>We&apos;ve already added the button component for you.</p>
-          <Button className="mt-2">Button</Button>
-        </div>
-        <div className="font-mono text-xs text-muted-foreground">
-          (Press <kbd>d</kbd> to toggle dark mode)
-        </div>
-      </div>
+    <div className="min-h-screen bg-white flex flex-col">
+      <Navbar />
+      <main className="flex-1">
+        <HeroSection />
+        <ServicesSection />
+        <TrendingInsights />
+        <ContactSection />
+      </main>
+      <Footer />
     </div>
-  )
+  );
 }
