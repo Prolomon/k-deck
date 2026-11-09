@@ -42,12 +42,6 @@ export default function ClassesPage() {
 
   const atsOptions = [
     {
-      id: "Foundation",
-      title: "Foundation",
-      description: "Basic Accounting Processes, Business Law, Quantitative Techniques, Communication Skills.",
-      badge: "Foundation",
-    },
-    {
       id: "ATS 1",
       title: "ATS 1",
       description: "Basic Accounting Processes, Business Law, Economics, Communication Skills.",
@@ -64,6 +58,12 @@ export default function ClassesPage() {
       title: "ATS 3",
       description: "Preparing for full ACA transition: Management, Public Sector Accounting, Tax & Audit.",
       badge: "ATS 3",
+    },
+    {
+      id: "Foundation",
+      title: "Foundation",
+      description: "Four core ICAN subjects: Business Environment, Financial Accounting, Management Accounting, Corporate and Business Law.",
+      badge: "Foundation",
     },
   ];
 
