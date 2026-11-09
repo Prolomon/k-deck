@@ -50,7 +50,7 @@ export default function AdminWhatsAppConfigPage() {
 
   const [formData, setFormData] = useState({
     name: "",
-    atsLevel: "ATS 1",
+    atsLevel: "Foundation",
     inviteUrl: "",
     description: "",
   });
@@ -110,7 +110,7 @@ export default function AdminWhatsAppConfigPage() {
       setModalOpen(false);
       setFormData({
         name: "",
-        atsLevel: "ATS 1",
+        atsLevel: "Foundation",
         inviteUrl: "",
         description: "",
       });

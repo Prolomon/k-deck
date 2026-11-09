@@ -1,5 +1,26 @@
 import prisma from "@/lib/prisma";
 import { AtsLevel } from "@prisma/client";
+
+export function normalizeToPrismaAtsLevel(level: string): AtsLevel {
+  if (!level) return AtsLevel.FOUNDATION;
+  const cleaned = level.trim().toUpperCase().replace(/[\s-]+/g, "_");
+  if (cleaned === "FOUNDATION" || cleaned === "FOUNDATION_STAGE") return AtsLevel.FOUNDATION;
+  if (cleaned === "ATS_1" || cleaned === "1" || cleaned === "ATS1") return AtsLevel.ATS_1;
+  if (cleaned === "ATS_2" || cleaned === "2" || cleaned === "ATS2") return AtsLevel.ATS_2;
+  if (cleaned === "ATS_3" || cleaned === "3" || cleaned === "ATS3") return AtsLevel.ATS_3;
+  return AtsLevel.FOUNDATION;
+}
+
+export function formatAtsLevelDisplay(level: string): string {
+  if (!level) return "";
+  const cleaned = level.trim().toUpperCase().replace(/[\s-]+/g, "_");
+  if (cleaned === "FOUNDATION") return "Foundation";
+  if (cleaned === "ATS_1") return "ATS 1";
+  if (cleaned === "ATS_2") return "ATS 2";
+  if (cleaned === "ATS_3") return "ATS 3";
+  return level;
+}
+
 import bcrypt from "bcryptjs";
 
 // Helper to parse diverse date and time strings accurately
@@ -624,11 +645,19 @@ export const DataStore = {
       const list = await prisma.atsRegistration.findMany({
         orderBy: { createdAt: "desc" },
       });
-      if (list) return list;
-    } catch {
-      // Fallback
+      if (list) {
+        return list.map((r) => ({
+          ...r,
+          atsLevels: (r.atsLevels || []).map(formatAtsLevelDisplay),
+        }));
+      }
+    } catch (err) {
+      console.error("Failed to fetch ATS registrations from database:", err);
     }
-    return store.atsRegistrations;
+    return store.atsRegistrations.map((r) => ({
+      ...r,
+      atsLevels: (r.atsLevels || []).map(formatAtsLevelDisplay),
+    }));
   },
 
   async createAtsRegistration(data: {
@@ -640,19 +669,25 @@ export const DataStore = {
     atsLevels: string[];
     notes?: string;
   }) {
+    const prismaLevels = (data.atsLevels || []).map(normalizeToPrismaAtsLevel);
     try {
-      return await prisma.atsRegistration.create({
+      const created = await prisma.atsRegistration.create({
         data: {
           name: data.name,
           address: data.address,
           phone: data.phone,
           email: data.email,
           subjectTaken: data.subjectTaken,
-          atsLevels: data.atsLevels as AtsLevel[],
+          atsLevels: prismaLevels,
           notes: data.notes || null,
         },
       });
-    } catch {
+      return {
+        ...created,
+        atsLevels: created.atsLevels.map(formatAtsLevelDisplay),
+      };
+    } catch (err) {
+      console.error("Failed to create ATS registration in database:", err);
       // Fallback
       const newReg = {
         id: `ats-${Date.now()}`,
@@ -661,7 +696,7 @@ export const DataStore = {
         phone: data.phone,
         email: data.email,
         subjectTaken: data.subjectTaken,
-        atsLevels: data.atsLevels,
+        atsLevels: (data.atsLevels || []).map(formatAtsLevelDisplay),
         notes: data.notes || null,
         createdAt: new Date(),
       };
@@ -684,11 +719,21 @@ export const DataStore = {
   async getAtsRegistrationById(id: string) {
     try {
       const reg = await prisma.atsRegistration.findUnique({ where: { id } });
-      if (reg) return reg;
+      if (reg) {
+        return {
+          ...reg,
+          atsLevels: (reg.atsLevels || []).map(formatAtsLevelDisplay),
+        };
+      }
     } catch {
       // Fallback
     }
-    return store.atsRegistrations.find((r) => r.id === id) || null;
+    const found = store.atsRegistrations.find((r) => r.id === id);
+    if (!found) return null;
+    return {
+      ...found,
+      atsLevels: (found.atsLevels || []).map(formatAtsLevelDisplay),
+    };
   },
 
   async updateAtsRegistration(
@@ -703,12 +748,19 @@ export const DataStore = {
       notes: string | null;
     }>
   ) {
+    const updateData: any = { ...data };
+    if (updateData.atsLevels) {
+      updateData.atsLevels = updateData.atsLevels.map(normalizeToPrismaAtsLevel);
+    }
     try {
       const updated = await prisma.atsRegistration.update({
         where: { id },
-        data: data as any,
+        data: updateData,
       });
-      return updated;
+      return {
+        ...updated,
+        atsLevels: (updated.atsLevels || []).map(formatAtsLevelDisplay),
+      };
     } catch {
       // Fallback
       const idx = store.atsRegistrations.findIndex((r) => r.id === id);
@@ -716,6 +768,9 @@ export const DataStore = {
         store.atsRegistrations[idx] = {
           ...store.atsRegistrations[idx],
           ...data,
+          atsLevels: data.atsLevels
+            ? data.atsLevels.map(formatAtsLevelDisplay)
+            : store.atsRegistrations[idx].atsLevels,
         };
         return store.atsRegistrations[idx];
       }
@@ -730,11 +785,19 @@ export const DataStore = {
         where: activeOnly ? { isActive: true } : undefined,
         orderBy: { createdAt: "asc" },
       });
-      if (list) return list;
-    } catch {
-      // Fallback
+      if (list) {
+        return list.map((g) => ({
+          ...g,
+          atsLevel: formatAtsLevelDisplay(g.atsLevel),
+        }));
+      }
+    } catch (err) {
+      console.error("Failed to fetch WhatsApp groups from database:", err);
     }
-    return activeOnly ? store.whatsappGroups.filter((g) => g.isActive) : store.whatsappGroups;
+    return (activeOnly ? store.whatsappGroups.filter((g) => g.isActive) : store.whatsappGroups).map((g) => ({
+      ...g,
+      atsLevel: formatAtsLevelDisplay(g.atsLevel),
+    }));
   },
 
   async createWhatsAppGroup(data: {
@@ -743,22 +806,28 @@ export const DataStore = {
     inviteUrl: string;
     description?: string;
   }) {
+    const prismaLevel = normalizeToPrismaAtsLevel(data.atsLevel);
     try {
-      return await prisma.whatsAppGroup.create({
+      const created = await prisma.whatsAppGroup.create({
         data: {
           name: data.name,
-          atsLevel: data.atsLevel as AtsLevel,
+          atsLevel: prismaLevel,
           inviteUrl: data.inviteUrl,
           description: data.description || null,
           isActive: true,
         },
       });
-    } catch {
+      return {
+        ...created,
+        atsLevel: formatAtsLevelDisplay(created.atsLevel),
+      };
+    } catch (err) {
+      console.error("Failed to create WhatsApp group in database:", err);
       // Fallback
       const newGroup = {
         id: `wa-${Date.now()}`,
         name: data.name,
-        atsLevel: data.atsLevel,
+        atsLevel: formatAtsLevelDisplay(prismaLevel),
         inviteUrl: data.inviteUrl,
         description: data.description || null,
         isActive: true,
