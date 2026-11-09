@@ -271,7 +271,7 @@ export default function AdminWhatsAppConfigPage() {
           <ChatBubbleLeftRightIcon className="w-12 h-12 text-neutral-600 mx-auto mb-3" />
           <h3 className="text-sm font-bold text-white">No WhatsApp Groups Configured</h3>
           <p className="text-xs text-neutral-400 mt-1 max-w-sm mx-auto">
-            Click &quot;Add WhatsApp Group&quot; above to create invite links for ATS 1, ATS 2, and ATS 3 candidates.
+            Click &quot;Add WhatsApp Group&quot; above to create invite links for Foundation, ATS 1, ATS 2, and ATS 3 candidates.
           </p>
         </div>
       )}
@@ -333,9 +333,10 @@ export default function AdminWhatsAppConfigPage() {
                     <SelectValue placeholder="Select ATS Level" />
                   </SelectTrigger>
                   <SelectContent className="bg-neutral-950 border-neutral-800 text-white">
-                    <SelectItem value="ATS 1">ATS 1 (Foundation / Basic)</SelectItem>
-                    <SelectItem value="ATS 2">ATS 2 (Intermediate)</SelectItem>
-                    <SelectItem value="ATS 3">ATS 3 (Final Stage / Revision)</SelectItem>
+                    <SelectItem value="Foundation">Foundation</SelectItem>
+                    <SelectItem value="ATS 1">ATS 1</SelectItem>
+                    <SelectItem value="ATS 2">ATS 2</SelectItem>
+                    <SelectItem value="ATS 3">ATS 3</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

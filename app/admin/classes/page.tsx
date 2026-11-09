@@ -244,7 +244,7 @@ export default function AdminClassesPage() {
 
           {/* Level Filter Pills */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
-            {["ALL", "ATS 1", "ATS 2", "ATS 3"].map((stage) => (
+            {["ALL", "Foundation", "ATS 1", "ATS 2", "ATS 3"].map((stage) => (
               <button
                 key={stage}
                 onClick={() => setAtsFilter(stage)}

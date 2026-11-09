@@ -92,22 +92,29 @@ model PasswordResetToken {
   createdAt DateTime @default(now())
 }
 
+enum AtsLevel {
+  FOUNDATION @map("Foundation")
+  ATS_1      @map("ATS 1")
+  ATS_2      @map("ATS 2")
+  ATS_3      @map("ATS 3")
+}
+
 model AtsRegistration {
-  id           String   @id @default(cuid())
+  id           String     @id @default(cuid())
   name         String
   address      String
   phone        String
   email        String
   subjectTaken String
-  atsLevels    String[]
+  atsLevels    AtsLevel[]
   notes        String?
-  createdAt    DateTime @default(now())
+  createdAt    DateTime   @default(now())
 }
 
 model WhatsAppGroup {
   id          String   @id @default(cuid())
   name        String
-  atsLevel    String
+  atsLevel    AtsLevel @default(ATS_1)
   inviteUrl   String
   description String?
   isActive    Boolean  @default(true)

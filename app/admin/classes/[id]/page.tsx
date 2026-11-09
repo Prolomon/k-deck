@@ -314,7 +314,7 @@ export default function AtsStudentDetailPage({
                 Enrolled ATS Coaching Stages (Select Multiple) *
               </Label>
               <div className="flex flex-wrap gap-3">
-                {["ATS 1", "ATS 2", "ATS 3"].map((stage) => {
+                {["Foundation", "ATS 1", "ATS 2", "ATS 3"].map((stage) => {
                   const isSelected = formData.atsLevels.includes(stage);
                   return (
                     <button

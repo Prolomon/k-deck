@@ -42,22 +42,28 @@ export default function ClassesPage() {
 
   const atsOptions = [
     {
-      id: "ATS 1",
-      title: "ATS 1 (Foundation Stage)",
-      description: "Basic Accounting Processes, Business Law, Economics, Communication Skills.",
+      id: "Foundation",
+      title: "Foundation",
+      description: "Basic Accounting Processes, Business Law, Quantitative Techniques, Communication Skills.",
       badge: "Foundation",
     },
     {
+      id: "ATS 1",
+      title: "ATS 1",
+      description: "Basic Accounting Processes, Business Law, Economics, Communication Skills.",
+      badge: "ATS 1",
+    },
+    {
       id: "ATS 2",
-      title: "ATS 2 (Intermediate Stage)",
+      title: "ATS 2",
       description: "Principles of Auditing, Quantitative Analysis, Information Technology, Cost Accounting.",
-      badge: "Intermediate",
+      badge: "ATS 2",
     },
     {
       id: "ATS 3",
-      title: "ATS 3 (Final Stage)",
+      title: "ATS 3",
       description: "Preparing for full ACA transition: Management, Public Sector Accounting, Tax & Audit.",
-      badge: "Final Professional",
+      badge: "ATS 3",
     },
   ];
 
@@ -336,7 +342,7 @@ export default function ClassesPage() {
                     <label className="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-2">
                       Select ATS Stages (Select Multiple as Applicable) *
                     </label>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                       {atsOptions.map((opt) => {
                         const checked = selectedAts.includes(opt.id);
                         return (
@@ -355,10 +361,7 @@ export default function ClassesPage() {
                               className="w-4 h-4 text-blue-600 rounded-sm border-gray-300 focus:ring-blue-500"
                             />
                             <div className="text-xs">
-                              <span className="font-bold block">{opt.id}</span>
-                              <span className="text-gray-500 text-[11px]">
-                                {opt.badge}
-                              </span>
+                              <span className="font-bold block">{opt.title}</span>
                             </div>
                           </label>
                         );

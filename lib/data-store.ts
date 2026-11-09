@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { AtsLevel } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
 // Helper to parse diverse date and time strings accurately
@@ -647,7 +648,7 @@ export const DataStore = {
           phone: data.phone,
           email: data.email,
           subjectTaken: data.subjectTaken,
-          atsLevels: data.atsLevels,
+          atsLevels: data.atsLevels as AtsLevel[],
           notes: data.notes || null,
         },
       });
@@ -705,7 +706,7 @@ export const DataStore = {
     try {
       const updated = await prisma.atsRegistration.update({
         where: { id },
-        data,
+        data: data as any,
       });
       return updated;
     } catch {
@@ -746,7 +747,7 @@ export const DataStore = {
       return await prisma.whatsAppGroup.create({
         data: {
           name: data.name,
-          atsLevel: data.atsLevel,
+          atsLevel: data.atsLevel as AtsLevel,
           inviteUrl: data.inviteUrl,
           description: data.description || null,
           isActive: true,
